@@ -48,5 +48,6 @@ In addition, there may be subdirectories that contain pairs of:
 
 ## List of target densities
 
-* `densjax/uni_linear_regression`: One-dimensional linear regression.
-
+| Class              | Directory             | Description                     |
+|:-------------------|:----------------------|:--------------------------------|
+| `UniLinearRegression` | `uni_linear_regression` | one-dimensional linear regression |
