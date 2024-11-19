@@ -28,22 +28,24 @@ In the top level directory of the repository:
 
 #### Utilities
 
-General utilities are in the top-level package directory.
+General utilities are in the `utils` directory.
 
-* `densjax/readers.py` is the code for deserializing and constraining parameters.
-* `densjax/BaysianModel.py` is the base class for Bayesian models (using `@classmethod` inheritance)
-
+* `densjax/utils/readers.py` is the code for deserializing and constraining parameters.
 
 #### Target density directory structure
 
-Each target density has its own subdirectory, which contains at least one file
+The models are in the `models` directory.  There is a top-level utility file with base classes for models.
 
-* `<density-dir>/density.py`: defines the model's log density up to an additive constant (using `@classmethod` inheritance).
+* `densjax/models/base.py`
 
-In addition, there may be subdirectories that contain pairs of:
+Each target density has its own subdirectory `<model-dir>` with a file defining the density.
 
-* `<density-dir>/<test-dir>/data.json`: data for the models created by [`json.dump`](https://docs.python.org/3/library/json.html#json.dump); can be read in using [`json.load`](https://docs.python.org/3/library/json.html#json.load).
-* `<density-dir>/<test-dir>/reference.npz`: reference draws created by [`numpy.savez_compressed`](https://numpy.org/doc/stable/reference/generated/numpy.savez_compressed.html); can be loaded using [`numpy.load`](https://numpy.org/doc/stable/reference/generated/numpy.load.html#numpy.load).
+* `densjax/models/<model-dir>/density.py`: defines the model's log density up to an additive constant (using `@classmethod` inheritance).
+
+In addition, there may be subdirectories `<test-dir>` that contain pairs of:
+
+* `densjax/models/<model-dir>/<test-dir>/data.json`: data for the models created by [`json.dump`](https://docs.python.org/3/library/json.html#json.dump); can be read in using [`json.load`](https://docs.python.org/3/library/json.html#json.load).
+* `densjax/models/<model-dir>/<test-dir>/reference.npz`: reference draws created by [`numpy.savez_compressed`](https://numpy.org/doc/stable/reference/generated/numpy.savez_compressed.html); can be loaded using [`numpy.load`](https://numpy.org/doc/stable/reference/generated/numpy.load.html#numpy.load).
 
 
 ## Model base class: `Model.py`
