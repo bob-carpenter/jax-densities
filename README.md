@@ -17,8 +17,6 @@ If you don't want editable mode, drop the `-e`. You can make sure the install ha
 $ python3 -m pip install -e .
 ```
 
-
-
 ## Basic directory structure
 
 #### Package helpers
@@ -36,13 +34,11 @@ General utilities are in the top-level package directory.
 * `densjax/BaysianModel.py` is the base class for Bayesian models (using `@classmethod` inheritance)
 
 
-## Target densities
-
 #### Target density directory structure
 
 Each target density has its own subdirectory, which contains at least one file
 
-* `<density-dir>density.py`: defines the model's log density up to an additive constant (using `@classmethod` inheritance).
+* `<density-dir>/density.py`: defines the model's log density up to an additive constant (using `@classmethod` inheritance).
 
 In addition, there may be subdirectories that contain pairs of:
 
@@ -50,7 +46,7 @@ In addition, there may be subdirectories that contain pairs of:
 * `<density-dir>/<test-dir>/reference.npz`: reference draws created by [`numpy.savez_compressed`](https://numpy.org/doc/stable/reference/generated/numpy.savez_compressed.html); can be loaded using [`numpy.load`](https://numpy.org/doc/stable/reference/generated/numpy.load.html#numpy.load).
 
 
-#### List of target densities
+## List of target densities
 
 * `densjax/uni_linear_regression`: One-dimensional linear regression.
 
