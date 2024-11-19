@@ -2,8 +2,8 @@ import jax
 import jax.numpy as jnp
 from jax.scipy.stats import norm, expon
 
-from ..BayesianModel import BayesianModel
-from ..readers import read_real, read_real_lb
+from ..base import BayesianModel
+from ...utils.readers import read_real, read_real_lb
 
 class UniLinearRegression(BayesianModel):
     @classmethod
