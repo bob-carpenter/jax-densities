@@ -1,7 +1,6 @@
 import jax
 import jax.numpy as jnp
-
-import ..uni_linear_regression.UniLinearRegression as UniLinearRegression
+from densjax import UniLinearRegression
 
 data = {
     'x': jnp.array([1.0, 2.0, 3.0]),

@@ -1,3 +1,5 @@
+import jax
+import jax.numpy as jnp
 
 def read_real_array(theta_unc, pos, shape):
     num_elements = jnp.prod(jnp.array(shape))
