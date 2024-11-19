@@ -7,6 +7,10 @@ from ..readers import read_real, read_real_lb
 
 class UniLinearRegression(BayesianModel):
     @classmethod
+    def num_unconstrained_parameters(cls, data):
+        return 3
+
+    @classmethod
     def constrain_parameters(cls, data, params_unc):
         pos = 0
         alpha, pos, _ = read_real(params_unc, pos)
@@ -43,16 +47,24 @@ class UniLinearRegression(BayesianModel):
         return log_lik
 
     @classmethod
-    def prior_sample(cls, rng, data):
+    def generated_quantities(cls, data, params, rng):
+        x_new = jnp.asarray(data['x_new'])
+        alpha = params['alpha']
+        beta = params['beta']
+        sigma = params['sigma']
+        mu_new = alpha + beta * x_new
+        y_new = mu_new + sigma * jax.random.normal(rng, shape=x_new.shape)
+        return {'y_new': y_new}
+        
+    @classmethod
+    def initial_draw(cls, rng, data):
         key_alpha, key_beta, key_sigma = jax.random.split(rng, 3)
-        alpha = jax.random.normal(key_alpha, shape=()) * 1.0 + 0.0  # loc=0.0, scale=1.0
-        beta = jax.random.normal(key_beta, shape=()) * 1.0 + 0.0
-        sigma = jax.random.exponential(key_sigma, shape=()) * 1.0  # scale=1.0
+        # normal(0, 1)
+        alpha = jax.random.normal(key_alpha, shape=())
+        beta = jax.random.normal(key_beta, shape=())
+        # exponential(1)
+        sigma = jax.random.exponential(key_sigma, shape=())
         draw = {'alpha': alpha, 'beta': beta, 'sigma': sigma}
         return draw
-
-    @classmethod
-    def num_params_unc(cls, data):
-        return 3
 
 
