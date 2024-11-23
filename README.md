@@ -40,7 +40,7 @@ The models are in the `models` directory.  There is a top-level utility file wit
 
 Each target density has its own subdirectory `<model-dir>` with a file defining the density.
 
-* `densjax/models/<model-dir>/density.py`: defines the model's log density up to an additive constant (using `@classmethod` inheritance).
+* `densjax/models/<model-dir>/density.py`: defines the model's log density up to an additive constant.
 
 In addition, there may be subdirectories `<test-dir>` that contain pairs of:
 
@@ -50,84 +50,75 @@ In addition, there may be subdirectories `<test-dir>` that contain pairs of:
 
 ## Model base class: `Model.py`
 
-Each model is coded as a class in Python that extends the base class `Model.py`.  All class functions are defined as class methodsin order to avoid dynamic class resolution
+Each model is coded as a class in Python that extends the base class `Model.py`.
 
 #### Dimensionality
 
-Each model must implement a class method to return the (fixed) number of dimensions of the arguments to the log density function.  The argument `data` is the a dcitionary of data variables.  There is no default implementation.
+Each model must implement a method to return the (fixed) number of dimensions of the arguments to the log density function.  The argument `data` is the a dictionary of data variables.  There is no default implementation.
 
 ```python
-@classmethod 
-def num_unconstrained_parameters(cls, data) 
+def num_unconstrained_parameters(self, data) 
 ```
 
 #### Variable transforms 
 
 Each model must provide an unconstraining transform from a dictionary of parameters to a vector of unconstrained parameters and a matching constraining inverse transfrom from a vector of unconstrained parameters to a dictionary of parameters. The constraining transform also returns a log Jacobian for the change-of-variables adjustment involved in the inverse transform.
 
-By default, the constraining transform maps a vector `v` of unconstrained parameters to the dictionary `{'params': v}` with a zero log Jacobian.  By default, the unconstraining transform maps a dictionary `{'params': v}` to the vector `v`.  Subclasses should override this for meaningful variable transforms.  These must both be declared as class methods.
+By default, the constraining transform maps a vector `v` of unconstrained parameters to the dictionary `{'params': v}` with a zero log Jacobian.  By default, the unconstraining transform maps a dictionary `{'params': v}` to the vector `v`.  Subclasses should override this for meaningful variable transforms.  These must both be defined.
 
 ```python 
-@classmethod 
-def constrain_parameters(cls, data, params_unc) 
+def constrain_parameters(self, data, params_unc) 
 ```
 
 ```python
-@classmethod 
-def unconstrain_parameters(cls, data, params) 
+def unconstrain_parameters(self, data, params) 
 ```
 
 #### Unnormalized log density---constrained and unconstrained
 
-Each model must implement a class method for a differentiable log density where `params_unconstrained` will be an array argument of size given by `num_unconstrained_parameters(cls, data)` and `data` will be a dictionary of data variables.
+Each model must implement a method for a differentiable log density where `params_unconstrained` will be an array argument of size given by `num_unconstrained_parameters(self, data)` and `data` will be a dictionary of data variables.
 
 ```python
-@classmethod 
-def log_density_unconstrained(cls, data, params_unconstrained) 
+def log_density_unconstrained(self, data, params_unconstrained) 
 ```
 
-By default, this class method applies the constraining transform to the unconstrained parameters and returns the sum of the resulting log Jacobian and the return of the log density function, where the argument is a dictionary of data and a dictionary of constrained parameters.  There is no default implementation.
+By default, this method applies the constraining transform to the unconstrained parameters and returns the sum of the resulting log Jacobian and the return of the log density function, where the argument is a dictionary of data and a dictionary of constrained parameters.  There is no default implementation.
 
 ```python
-@classmethod
-def log_density(cls, data, params)
+def log_density(self, data, params)
 ```
 
 
 #### Initializer
 
-Each model must provide a class method to initialize that returns a vector of the size given by `num_unconstrained_parameters`. The `Model.py` class provides a default implementation that returns a standard normal draw, which may be overridden by a subclass.
+Each model must provide a method to initialize that returns a vector of the size given by `num_unconstrained_parameters`. The `Model.py` class provides a default implementation that returns a standard normal draw, which may be overridden by a subclass.
 
 ```python 
-@classmethod 
-def initialize(cls, data) 
+def initialize(self, data) 
 ```
 
 #### Generated quantities
 
-Each model must provide a class method to define further quantities generated from parameters and data using a random number generator and return them in the form o a dictionary.  The default is to return an empty dictionary.
+Each model must provide a method to define further quantities generated from parameters and data using a random number generator and return them in the form o a dictionary.  The default is to return an empty dictionary.
 
 Models can provide additional quantities that are (random) functions of the parameters and data.  These will often be used for posterior predictive quantities of interest in Bayesian models in a similar manner to the Stan block `generated quantities`.
 
 ```python
-@classmethod 
-def generated_quantities(cls, data, params, rng) 
+def generated_quantities(self, data, params, rng) 
 ```
 
 
 ## Bayesian base model
 
-A base class `BayesianModel` is provided in the package which can be used for Bayesian models.  It implements the `log_density` class method over constrained parameters and data as the sum of a prior and a likelihood, given the following signatures, where `data` is a dictionary of data and `params` a dictionary of constrained parameters.  The log Jacobian is handled by the superclass's `log_density` method.
+A base class `BayesianModel` is provided in the package which can be used for Bayesian models.  It implements the `log_density` method over constrained parameters and data as the sum of a prior and a likelihood, given the following signatures, where `data` is a dictionary of data and `params` a dictionary of constrained parameters.  The log Jacobian is handled by the superclass's `log_density` method.
 
 ```python
-@classmethod  
-def log_prior(cls, data, params)
+def log_prior(self, data, params)
 
-@classmethod  
-def log_likelihood(cls, data, params)
+def log_likelihood(self, data, params)
 ```
 
-By default, the `log_prior` class method returns 0.  There is no defualt implementation of the `log_likelihood` class method.
+By default, the `log_prior` method returns `0.0`.  There is no defualt implementation of the `log_likelihood` method.
 
 
 ## List of target densities
